@@ -68,14 +68,16 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .vuoto{color:var(--muto); font-size:14.5px; padding:16px; background:var(--card);
   border:1px dashed var(--linea); border-radius:var(--r)}
 #toast{
-  position:fixed; bottom:calc(100px + env(safe-area-inset-bottom)); left:50%;
+  position:fixed; bottom:calc(112px + env(safe-area-inset-bottom)); left:50%;
   transform:translateX(-50%) translateY(140px);
+  opacity:0; visibility:hidden;
   background:var(--ok); color:#06251A; font-weight:700; font-size:14.5px;
-  padding:13px 22px; border-radius:999px; z-index:1200; transition:transform .3s cubic-bezier(.22,1,.36,1);
+  padding:13px 22px; border-radius:999px; z-index:1200;
+  transition:transform .3s cubic-bezier(.22,1,.36,1), opacity .25s ease, visibility .25s;
   box-shadow:0 10px 34px #000b; text-align:center; max-width:calc(100vw - 40px);
   pointer-events:none; line-height:1.35;
 }
-#toast.on{transform:translateX(-50%) translateY(0)}
+#toast.on{transform:translateX(-50%) translateY(0); opacity:1; visibility:visible}
 #toast.record{background:var(--oro); color:#3a2b00}
 .avviso-mem{
   background:#3d1220; border:1px solid var(--rosso); color:#ffc3cd; border-radius:var(--r);
@@ -301,7 +303,7 @@ nav button,.set-ok,.btn-timer,#timerbar .t-btn{min-height:44px}
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important}
   .btn-grande:active,.salva-ses:active,.set-ok:active,.sett-riga.tap:active{transform:none}
-  #toast{transition:opacity .2s}
+  #toast{transition:opacity .2s, visibility .2s}
   html{scroll-behavior:auto}
 }
 </style>
@@ -474,6 +476,11 @@ function carica(){
 }
 function persisti(){ try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){memOk=false;document.getElementById('avvisoMem').style.display='block';} }
 let toastTO1=null,toastTO2=null;
+function nascondiToast(){
+  clearTimeout(toastTO1); clearTimeout(toastTO2);
+  const el=document.getElementById('toast');
+  if(el)el.classList.remove('on');
+}
 function toast(t,record){
   const el=document.getElementById('toast');
   clearTimeout(toastTO1); clearTimeout(toastTO2);
@@ -483,7 +490,7 @@ function toast(t,record){
   void el.offsetWidth;
   toastTO1=setTimeout(()=>{
     el.classList.add('on');
-    toastTO2=setTimeout(()=>el.classList.remove('on'),record?3400:2300);
+    toastTO2=setTimeout(nascondiToast,record?3400:2300);
   },20);
 }
 
@@ -524,12 +531,17 @@ function salvaBozza(subito){
   if(subito)fai(); else salvaTimer=setTimeout(fai,400);
 }
 function svuotaBozza(){ try{localStorage.removeItem(BKEY);}catch(e){} }
-/* salva anche quando l'app va in background (YouTube, chiamate, ecc.) */
-document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden')salvaBozza(true); });
+/* salva quando l'app va in background; e appena torni, togli ogni toast rimasto impiccato
+   (i timer JS vengono congelati in background e il toast non farebbe in tempo a sparire da solo) */
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden')salvaBozza(true);
+  else nascondiToast();
+});
 window.addEventListener('pagehide',()=>salvaBozza(true));
 
 /* ============ NAV ============ */
 function vai(btn){
+  nascondiToast();
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   document.querySelectorAll('.vista').forEach(v=>v.classList.remove('on'));
@@ -817,7 +829,7 @@ function salvaSessione(){
 }
 
 /* ============ TIMER (in alto + suono) ============ */
-let timerInt=null,timerFine=0,timerTot=0,timerNome='';
+let timerInt=null,timerFine=0,timerTot=0,timerNome='',timerFineTO=null;
 let actx=null;
 function sbloccaAudio(){ try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended')actx.resume(); }catch(e){} }
 document.addEventListener('pointerdown',sbloccaAudio,{once:true});
@@ -842,7 +854,7 @@ function riprendiTimer(t){ timerTot=t.tot; avviaConteggio(t.fine,t.nome); }
 function startTimer(sec,nome){ timerTot=sec; avviaConteggio(Date.now()+sec*1000,nome); salvaBozza(true); }
 function piuTempo(){ if(timerFine>Date.now()){ timerFine+=30000; timerTot+=30; salvaBozza(true);} }
 function avviaConteggio(fine,nome){
-  clearInterval(timerInt);
+  clearInterval(timerInt); clearTimeout(timerFineTO);   /* ammazza un eventuale auto-spegnimento del timer precedente */
   timerFine=fine; timerNome=nome||'';
   document.getElementById('t-ex').textContent=timerNome;
   const bar=document.getElementById('timerbar');
@@ -859,13 +871,13 @@ function avviaConteggio(fine,nome){
       val.textContent='VAI!'; val.classList.add('fine');
       beep();
       if(navigator.vibrate)navigator.vibrate([250,120,250,120,400]);
-      setTimeout(stopTimer,4000);
+      timerFineTO=setTimeout(stopTimer,4000);
     }
   };
   tick(); timerInt=setInterval(tick,250);
 }
 function stopTimer(){
-  clearInterval(timerInt);
+  clearInterval(timerInt); clearTimeout(timerFineTO);
   timerFine=0;
   document.getElementById('timerbar').classList.remove('on');
   document.body.classList.remove('timer-on');
@@ -970,11 +982,12 @@ function importa(ev){
 /* ============ AVVIO ============ */
 carica();
 renderGiorni();
-/* se c'è una sessione lasciata a metà (di un giorno valido), riaprila direttamente */
+/* NIENTE auto-apertura: si parte sempre dalla home. Se c'è una bozza valida,
+   la home mostra già il bottone "▶ Riprendi la sessione in corso".
+   Qui scartiamo solo le bozze di giorni non più validi. */
 (function(){
   const b=leggiBozza();
-  if(b && SCHEDA.some(g=>g.id===b.giorno)){ apriSessione(b.giorno); toast('Sessione ripristinata: riprendi da dove eri 🕷'); }
-  else if(b){ svuotaBozza(); }
+  if(b && !SCHEDA.some(g=>g.id===b.giorno)) svuotaBozza();
 })();
 
 /* PWA: registra il service worker solo quando l'app gira da un sito (non da file locale) */
