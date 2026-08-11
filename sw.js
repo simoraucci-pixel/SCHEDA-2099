@@ -1,5 +1,5 @@
 /* Scheda 2099 — service worker: app disponibile offline */
-const CACHE = 'scheda2099-v3';
+const CACHE = 'scheda2099-v5';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

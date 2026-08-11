@@ -68,11 +68,12 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .vuoto{color:var(--muto); font-size:14.5px; padding:16px; background:var(--card);
   border:1px dashed var(--linea); border-radius:var(--r)}
 #toast{
-  position:fixed; bottom:calc(96px + env(safe-area-inset-bottom)); left:50%;
-  transform:translateX(-50%) translateY(120px);
+  position:fixed; bottom:calc(100px + env(safe-area-inset-bottom)); left:50%;
+  transform:translateX(-50%) translateY(140px);
   background:var(--ok); color:#06251A; font-weight:700; font-size:14.5px;
-  padding:12px 22px; border-radius:999px; z-index:1000; transition:transform .28s ease;
-  box-shadow:0 8px 28px #000a; text-align:center; max-width:88vw;
+  padding:13px 22px; border-radius:999px; z-index:1200; transition:transform .3s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 10px 34px #000b; text-align:center; max-width:calc(100vw - 40px);
+  pointer-events:none; line-height:1.35;
 }
 #toast.on{transform:translateX(-50%) translateY(0)}
 #toast.record{background:var(--oro); color:#3a2b00}
@@ -285,6 +286,24 @@ table.checks .del{background:none;border:0;color:var(--muto2);font-size:15px}
 @media (max-width:400px){
   .serie-int,.set-riga{grid-template-columns:40px 1fr 1fr 48px; gap:6px}
 }
+/* --- micro-interazioni mobile (feedback al tocco, 150-300ms) --- */
+button{touch-action:manipulation}
+.btn-grande:active,.salva-ses:active,.btn-timer:active,.set-ok:active,
+.btn-copia:active,.check-form button:active,.btn-sec:active,.torna:active,
+.sett-riga.tap:active,#timerbar .t-btn:active{transform:scale(.97)}
+.btn-grande,.salva-ses,.btn-timer,.set-ok,.btn-copia,.check-form button,
+.btn-sec,.torna,.sett-riga,#timerbar .t-btn,.ex-testa{transition:transform .12s ease, background .15s, border-color .15s, filter .15s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+.set-ok.si.pop{animation:pop .28s ease}
+.ex.fatto .ex-num{animation:pop .3s ease}
+/* target touch minimo garantito ovunque */
+nav button,.set-ok,.btn-timer,#timerbar .t-btn{min-height:44px}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important}
+  .btn-grande:active,.salva-ses:active,.set-ok:active,.sett-riga.tap:active{transform:none}
+  #toast{transition:opacity .2s}
+  html{scroll-behavior:auto}
+}
 </style>
 </head>
 <body>
@@ -327,8 +346,8 @@ table.checks .del{background:none;border:0;color:var(--muto2);font-size:15px}
     <div class="sez">Check settimanale del corpo</div>
     <p class="hint" style="margin-bottom:10px">Una volta a settimana: peso (media di 3 misurazioni) e girovita.</p>
     <div class="check-form">
-      <input type="number" step="0.1" id="ck-peso" placeholder="Peso (kg)" inputmode="decimal">
-      <input type="number" step="0.5" id="ck-vita" placeholder="Girovita (cm)" inputmode="decimal">
+      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" id="ck-peso" placeholder="Peso (kg)">
+      <input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" id="ck-vita" placeholder="Girovita (cm)">
       <button onclick="salvaCheck()">Salva il check di oggi</button>
     </div>
     <div id="ck-tab"></div>
@@ -454,10 +473,18 @@ function carica(){
   if(!ST.sessioni)ST.sessioni=[]; if(!ST.checks)ST.checks=[];
 }
 function persisti(){ try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){memOk=false;document.getElementById('avvisoMem').style.display='block';} }
+let toastTO1=null,toastTO2=null;
 function toast(t,record){
   const el=document.getElementById('toast');
-  el.textContent=t; el.classList.toggle('record',!!record); el.classList.add('on');
-  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),record?3500:2400);
+  clearTimeout(toastTO1); clearTimeout(toastTO2);
+  el.classList.remove('on');                 /* resetta un eventuale toast ancora aperto */
+  el.textContent=t; el.classList.toggle('record',!!record);
+  /* forza un reflow così la transizione riparte pulita anche a toast già visibile */
+  void el.offsetWidth;
+  toastTO1=setTimeout(()=>{
+    el.classList.add('on');
+    toastTO2=setTimeout(()=>el.classList.remove('on'),record?3400:2300);
+  },20);
 }
 
 /* ============ BOZZA AUTOMATICA (non perdi più niente) ============ */
@@ -632,8 +659,8 @@ function apriSessione(gid){
     for(let i=0;i<ex.s;i++){
       h+='<div class="set-riga" id="riga-'+ex.id+'-'+i+'">'
         +'<div class="set-n">'+(i+1)+'ª</div>'
-        +'<input type="number" step="0.5" inputmode="decimal" placeholder="'+(ex.bw?'0':'kg')+'" id="kg-'+ex.id+'-'+i+'" oninput="aggiornaStato()">'
-        +'<input type="number" inputmode="numeric" placeholder="'+unita+'" id="rp-'+ex.id+'-'+i+'" oninput="aggiornaStato()">'
+        +'<input type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" placeholder="'+(ex.bw?'0':'kg')+'" id="kg-'+ex.id+'-'+i+'" oninput="aggiornaStato()">'
+        +'<input type="text" inputmode="numeric" pattern="[0-9]*" placeholder="'+unita+'" id="rp-'+ex.id+'-'+i+'" oninput="aggiornaStato()">'
         +'<button class="set-ok" id="ok-'+ex.id+'-'+i+'" onclick="segnaSet(\''+ex.id+'\','+i+','+ex.rec+',\''+ex.n.replace(/'/g,"\\'")+'\')">✓</button>'
       +'</div>';
     }
@@ -739,7 +766,11 @@ function aggiornaStato(silenzioso){
 function segnaSet(exId,i,rec,nome){
   const b=document.getElementById('ok-'+exId+'-'+i);
   b.classList.toggle('si');
-  if(b.classList.contains('si'))startTimer(rec,nome);
+  if(b.classList.contains('si')){
+    b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');  /* micro-bounce */
+    if(navigator.vibrate)navigator.vibrate(15);                              /* tap tattile leggero */
+    startTimer(rec,nome);
+  }
   aggiornaStato();
 }
 function salvaSessione(){
@@ -776,8 +807,13 @@ function salvaSessione(){
   document.getElementById('pannello-sessione').style.display='none';
   document.getElementById('pannello-giorni').style.display='block';
   renderGiorni();
-  if(record.length)toast('🏆 NUOVO RECORD su: '+record.join(', ')+'!',true);
-  else toast('Sessione registrata. Grande, fra 🕷');
+  if(record.length){
+    if(navigator.vibrate)navigator.vibrate([40,60,40,60,120]);  /* pattern celebrativo record */
+    toast('🏆 NUOVO RECORD su: '+record.join(', ')+'!',true);
+  }else{
+    if(navigator.vibrate)navigator.vibrate(30);
+    toast('Sessione registrata. Grande, fra 🕷');
+  }
 }
 
 /* ============ TIMER (in alto + suono) ============ */
