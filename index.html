@@ -5,60 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Scheda 2099 — Tracker Allenamento</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#0A101C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Scheda 2099">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --sfondo:#0B1220; --card:#141E32; --card2:#1A2740; --linea:#25334E;
+  --sfondo:#0A101C; --sfondo2:#0D1524; --card:#131D31; --card2:#1A2740; --linea:#243350;
   --ciano:#2BD9FF; --ciano-scuro:#0E4B5C; --rosso:#FF3B57;
-  --testo:#F0F5FA; --muto:#93A3B8; --muto2:#5B6B82;
-  --ok:#3DDC97; --ok-scuro:#12402E; --oro:#FFC53D;
+  --testo:#F2F6FB; --muto:#93A3B8; --muto2:#5B6B82;
+  --ok:#3DDC97; --ok-scuro:#123B2B; --ok-bordo:#1d5a41; --oro:#FFC53D;
   --disp:'Chakra Petch',sans-serif; --body:'Barlow',sans-serif;
-  --r:14px;
+  --r:16px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
 body{
   background:var(--sfondo); color:var(--testo); font-family:var(--body);
   font-size:16px; line-height:1.5;
-  padding-bottom:calc(80px + env(safe-area-inset-bottom));
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+  transition:padding-top .2s;
 }
+body.timer-on{padding-top:66px}
 button{font-family:inherit; cursor:pointer}
 /* ---------- HEADER ---------- */
-header{padding:18px 16px 12px; display:flex; align-items:center; gap:12px}
+header{padding:calc(14px + env(safe-area-inset-top)) 16px 10px; display:flex; align-items:center; gap:12px}
 .logo{
-  width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg,#12324a,#0E4B5C);
-  display:flex; align-items:center; justify-content:center; font-size:22px; flex:none;
+  width:44px; height:44px; border-radius:13px; background:linear-gradient(135deg,#12324a,#0E4B5C);
+  display:flex; align-items:center; justify-content:center; font-size:23px; flex:none;
   border:1px solid var(--ciano-scuro);
 }
 header h1{font-family:var(--disp); font-size:19px; letter-spacing:.04em}
 header h1 span{color:var(--ciano)}
-header .sub{font-size:13px; color:var(--muto)}
+header .sub{font-size:12.5px; color:var(--muto)}
 /* ---------- NAV ---------- */
 nav{
   position:fixed; bottom:0; left:0; right:0; z-index:900;
   display:grid; grid-template-columns:repeat(3,1fr);
-  background:#0D1526f5; backdrop-filter:blur(12px); border-top:1px solid var(--linea);
-  padding:6px 8px calc(8px + env(safe-area-inset-bottom));
-  gap:6px;
+  background:#0C1322f7; backdrop-filter:blur(14px); border-top:1px solid var(--linea);
+  padding:6px 8px calc(8px + env(safe-area-inset-bottom)); gap:6px;
 }
 nav button{
   background:none; border:0; color:var(--muto); font-size:12px; font-weight:600;
   padding:8px 4px; border-radius:12px; transition:all .15s;
 }
 nav button .ic{display:block; font-size:20px; margin-bottom:2px}
-nav button.on{color:var(--ciano); background:#173049}
+nav button.on{color:var(--ciano); background:#16304a}
 main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .vista{display:none}
 .vista.on{display:block; animation:entra .22s ease}
 @keyframes entra{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
 @media (prefers-reduced-motion:reduce){.vista.on{animation:none}}
-/* ---------- COMPONENTI BASE ---------- */
+/* ---------- COMPONENTI ---------- */
 .card{background:var(--card); border:1px solid var(--linea); border-radius:var(--r); padding:16px}
 .sez{font-family:var(--disp); font-size:13px; letter-spacing:.1em; text-transform:uppercase;
   color:var(--muto); margin:22px 2px 10px}
@@ -66,20 +68,50 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .vuoto{color:var(--muto); font-size:14.5px; padding:16px; background:var(--card);
   border:1px dashed var(--linea); border-radius:var(--r)}
 #toast{
-  position:fixed; top:14px; left:50%; transform:translateX(-50%) translateY(-90px);
+  position:fixed; bottom:calc(96px + env(safe-area-inset-bottom)); left:50%;
+  transform:translateX(-50%) translateY(120px);
   background:var(--ok); color:#06251A; font-weight:700; font-size:14.5px;
-  padding:12px 24px; border-radius:999px; z-index:1000; transition:transform .25s ease;
-  box-shadow:0 6px 24px #0008; text-align:center; max-width:90vw;
+  padding:12px 22px; border-radius:999px; z-index:1000; transition:transform .28s ease;
+  box-shadow:0 8px 28px #000a; text-align:center; max-width:88vw;
 }
 #toast.on{transform:translateX(-50%) translateY(0)}
+#toast.record{background:var(--oro); color:#3a2b00}
 .avviso-mem{
   background:#3d1220; border:1px solid var(--rosso); color:#ffc3cd; border-radius:var(--r);
   font-size:13.5px; padding:12px 14px; margin-bottom:14px; display:none;
 }
-/* ---------- HOME: OGGI ---------- */
+.banner-bozza{
+  background:#12324a; border:1px solid var(--ciano-scuro); color:#bfeeff; border-radius:var(--r);
+  font-size:14px; padding:12px 14px; margin-bottom:12px; display:none;
+}
+/* ---------- TIMER IN ALTO (mai coperto dalla tastiera) ---------- */
+#timerbar{
+  position:fixed; top:0; left:0; right:0; z-index:960;
+  background:#0C1626fa; border-bottom:1px solid var(--ciano);
+  padding:calc(8px + env(safe-area-inset-top)) 14px 8px;
+  display:none; box-shadow:0 6px 24px #0009;
+}
+#timerbar.on{display:block}
+#timerbar .t-riga{max-width:620px; margin:0 auto; display:flex; align-items:center; gap:10px}
+#timerbar .t-info{min-width:0; flex:1}
+#timerbar .t-lab{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muto)}
+#timerbar .t-ex{font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#timerbar .t-val{font-family:var(--disp); font-weight:700; font-size:30px; color:var(--ciano);
+  font-variant-numeric:tabular-nums; line-height:1}
+#timerbar .t-val.fine{color:var(--ok)}
+#timerbar .t-btn{
+  background:var(--card2); border:1px solid var(--linea); color:var(--testo);
+  font-size:13px; font-weight:700; border-radius:10px; padding:9px 11px; flex:none;
+}
+#timerbar .t-x{color:var(--muto)}
+#timerbar .t-prog{max-width:620px; margin:7px auto 0; height:4px; background:var(--card2);
+  border-radius:999px; overflow:hidden}
+#timerbar .t-prog i{display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--ciano),#7ee8ff);
+  border-radius:999px; transition:width .25s linear}
+/* ---------- HOME ---------- */
 .oggi-card{
-  background:linear-gradient(150deg,#14263e,#101B2E); border:1px solid var(--ciano-scuro);
-  border-radius:18px; padding:20px 18px; margin-bottom:6px;
+  background:linear-gradient(150deg,#15273f,#0f1a2d); border:1px solid var(--ciano-scuro);
+  border-radius:20px; padding:20px 18px; margin-bottom:6px;
 }
 .oggi-card .tag{
   display:inline-block; font-family:var(--disp); font-size:11px; letter-spacing:.14em;
@@ -87,22 +119,23 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 }
 .oggi-card h2{font-family:var(--disp); font-size:21px; line-height:1.25}
 .oggi-card .focus{font-size:14px; color:var(--muto); margin-top:4px}
+.oggi-card .conta{font-size:13px; color:var(--ciano); margin-top:8px; font-weight:600}
 .btn-grande{
-  display:block; width:100%; margin-top:16px; background:var(--rosso); border:0; color:#fff;
+  display:block; width:100%; margin-top:14px; border:0; color:#fff;
+  background:linear-gradient(135deg,var(--rosso),#ff5a72);
   font-family:var(--disp); font-weight:700; font-size:16px; letter-spacing:.06em;
-  padding:16px; border-radius:14px; transition:filter .15s;
+  padding:16px; border-radius:14px; transition:filter .15s; box-shadow:0 6px 20px #ff3b5726;
 }
-.btn-grande:hover{filter:brightness(1.08)}
-.btn-grande.fatto{background:var(--ok-scuro); color:var(--ok); border:1px solid #1d5a41}
-.oggi-riposo{font-size:14.5px; color:var(--testo); margin-top:12px; background:#101B2E;
-  border-radius:12px; padding:12px 14px}
-/* settimana */
+.btn-grande:hover{filter:brightness(1.06)}
+.btn-grande.fatto{background:var(--ok-scuro); color:var(--ok); border:1px solid var(--ok-bordo); box-shadow:none}
+.btn-grande.riprendi{background:linear-gradient(135deg,#0E4B5C,#17708a); box-shadow:0 6px 20px #2bd9ff1f}
+.oggi-riposo{font-size:14.5px; margin-top:12px; background:#101B2E; border-radius:12px; padding:12px 14px}
 .sett-riga{
   display:flex; align-items:center; gap:12px; background:var(--card);
   border:1px solid var(--linea); border-radius:var(--r); padding:13px 14px; margin-bottom:8px;
 }
 .sett-riga.tap{cursor:pointer}
-.sett-riga.tap:hover{border-color:var(--ciano-scuro)}
+.sett-riga.tap:active{background:var(--card2)}
 .sett-riga.riposo{opacity:.6}
 .sett-riga .g-abbr{
   width:44px; height:44px; flex:none; border-radius:12px; background:var(--card2);
@@ -114,7 +147,7 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .sett-riga .g-focus{font-size:12.5px; color:var(--muto)}
 .sett-riga .g-freccia{margin-left:auto; color:var(--muto2); font-size:18px}
 /* ---------- SESSIONE ---------- */
-.ses-top{display:flex; align-items:center; gap:10px; margin-bottom:6px}
+.ses-top{display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap}
 .torna{
   background:var(--card); border:1px solid var(--linea); color:var(--testo);
   font-size:14px; font-weight:600; padding:9px 14px; border-radius:999px;
@@ -122,24 +155,24 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .ses-data{font-size:13px; color:var(--muto)}
 .ses-tit{font-family:var(--disp); font-size:20px; margin:8px 2px 2px}
 .ses-focus{font-size:13.5px; color:var(--muto); margin:0 2px}
+.salvato-mini{font-size:12px; color:var(--muto2); margin:6px 2px 0}
+.salvato-mini b{color:var(--ok); font-weight:600}
 .avanzamento{position:sticky; top:0; z-index:800; background:var(--sfondo);
   padding:10px 0 8px; margin:8px 0 4px}
+body.timer-on .avanzamento{top:66px}
 .av-testo{display:flex; justify-content:space-between; font-size:13px; color:var(--muto); margin-bottom:6px}
 .av-testo b{color:var(--testo)}
 .av-barra{height:8px; background:var(--card2); border-radius:999px; overflow:hidden}
 .av-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--ciano),#7ee8ff);
   border-radius:999px; transition:width .3s ease}
-/* card esercizio */
 .ex{
-  background:var(--card); border:1px solid var(--linea); border-radius:16px;
+  background:var(--card); border:1px solid var(--linea); border-radius:18px;
   margin:12px 0; overflow:hidden;
 }
-.ex.fatto{border-color:#1d5a41}
-.ex-testa{
-  display:flex; align-items:center; gap:12px; padding:15px 16px; cursor:pointer; user-select:none;
-}
+.ex.fatto{border-color:var(--ok-bordo)}
+.ex-testa{display:flex; align-items:center; gap:12px; padding:15px 16px; cursor:pointer; user-select:none}
 .ex-num{
-  width:34px; height:34px; flex:none; border-radius:10px; background:var(--card2);
+  width:36px; height:36px; flex:none; border-radius:11px; background:var(--card2);
   display:flex; align-items:center; justify-content:center;
   font-family:var(--disp); font-size:14px; color:var(--muto);
 }
@@ -151,11 +184,8 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
 .ex-corpo{display:none; padding:0 16px 16px; border-top:1px solid var(--linea)}
 .ex.aperto .ex-corpo{display:block}
 .ex-istruzione{font-size:13.5px; color:var(--muto); padding:11px 0 2px}
-.box-ultima{
-  margin-top:10px; background:var(--card2); border-radius:12px; padding:10px 12px; font-size:13.5px;
-}
+.box-ultima{margin-top:10px; background:var(--card2); border-radius:12px; padding:10px 12px; font-size:13.5px}
 .box-ultima .et{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muto); margin-bottom:2px}
-.box-ultima b{font-weight:600}
 .box-prog{
   margin-top:10px; border-radius:12px; padding:11px 12px; font-size:14px; font-weight:600;
   background:#3a2f10; color:var(--oro); border:1px solid #5d4a15;
@@ -164,25 +194,27 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
   margin-top:10px; width:100%; background:var(--card2); border:1px solid var(--linea);
   color:var(--ciano); font-size:14px; font-weight:600; padding:11px; border-radius:12px;
 }
-/* righe serie */
 .serie-int{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muto2);
-  display:grid; grid-template-columns:52px 1fr 1fr 52px; gap:8px; margin:14px 0 6px; text-align:center}
+  display:grid; grid-template-columns:48px 1fr 1fr 54px; gap:8px; margin:14px 0 6px; text-align:center}
 .serie-int span:first-child{text-align:left; padding-left:2px}
-.set-riga{display:grid; grid-template-columns:52px 1fr 1fr 52px; gap:8px; align-items:center; margin-bottom:8px}
-.set-n{font-family:var(--disp); font-size:14px; color:var(--muto); padding-left:2px}
+.set-riga{display:grid; grid-template-columns:48px 1fr 1fr 54px; gap:8px; align-items:center; margin-bottom:8px;
+  border-radius:12px; transition:background .2s}
+.set-riga.done{background:#12312466}
+.set-n{font-family:var(--disp); font-size:14px; color:var(--muto); padding-left:6px}
+.set-riga.done .set-n{color:var(--ok)}
 .set-riga input{
-  width:100%; background:var(--sfondo); border:1.5px solid var(--linea); color:var(--testo);
+  width:100%; background:var(--sfondo2); border:1.5px solid var(--linea); color:var(--testo);
   font-size:17px; font-weight:600; text-align:center; padding:12px 4px; border-radius:12px; outline:none;
 }
 .set-riga input:focus{border-color:var(--ciano)}
 .set-riga input::placeholder{color:var(--muto2); font-weight:400}
 .set-ok{
-  height:47px; background:var(--sfondo); border:1.5px solid var(--linea); color:var(--muto2);
+  height:47px; background:var(--sfondo2); border:1.5px solid var(--linea); color:var(--muto2);
   font-size:18px; border-radius:12px; transition:all .15s;
 }
-.set-ok.si{background:var(--ok-scuro); border-color:#1d5a41; color:var(--ok)}
+.set-ok.si{background:var(--ok-scuro); border-color:var(--ok-bordo); color:var(--ok)}
 .ex-extra{display:flex; gap:10px; margin-top:12px; align-items:stretch}
-.rir-box{flex:1; background:var(--sfondo); border:1.5px solid var(--linea); border-radius:12px;
+.rir-box{flex:1; background:var(--sfondo2); border:1.5px solid var(--linea); border-radius:12px;
   padding:8px 12px; display:flex; align-items:center; gap:8px}
 .rir-box label{font-size:13px; color:var(--muto); white-space:nowrap}
 .rir-box select{flex:1; background:none; border:0; color:var(--testo); font-size:16px;
@@ -193,32 +225,20 @@ main{max-width:620px; margin:0 auto; padding:4px 14px 30px}
   font-size:14px; font-weight:700; border-radius:12px; padding:10px;
 }
 .ex-note-input{
-  width:100%; margin-top:10px; background:var(--sfondo); border:1.5px solid var(--linea);
+  width:100%; margin-top:10px; background:var(--sfondo2); border:1.5px solid var(--linea);
   color:var(--testo); font-size:14.5px; padding:11px 12px; border-radius:12px; outline:none; font-family:inherit;
 }
 .ex-note-input:focus{border-color:var(--ciano)}
 .salva-ses{
-  width:100%; margin-top:14px; background:var(--rosso); border:0; color:#fff;
+  width:100%; margin-top:14px; border:0; color:#fff;
+  background:linear-gradient(135deg,var(--rosso),#ff5a72);
   font-family:var(--disp); font-weight:700; font-size:16px; letter-spacing:.05em;
-  padding:17px; border-radius:14px;
+  padding:17px; border-radius:14px; box-shadow:0 6px 20px #ff3b5726;
 }
-/* ---------- TIMER ---------- */
-#timerbar{
-  position:fixed; left:12px; right:12px; bottom:calc(84px + env(safe-area-inset-bottom));
-  max-width:596px; margin:0 auto; z-index:950;
-  background:#0D1a2af7; border:1px solid var(--ciano); border-radius:16px;
-  padding:12px 16px; display:none; align-items:center; gap:12px;
-  box-shadow:0 8px 30px #000a;
+.annulla-ses{
+  display:block; width:100%; margin-top:10px; background:none; border:0; color:var(--muto2);
+  font-size:13px; text-decoration:underline; padding:8px;
 }
-#timerbar.on{display:flex}
-#timerbar .t-info{min-width:0}
-#timerbar .t-lab{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muto)}
-#timerbar .t-ex{font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-#timerbar .t-val{font-family:var(--disp); font-weight:700; font-size:30px; color:var(--ciano);
-  font-variant-numeric:tabular-nums; margin-left:auto}
-#timerbar .t-val.fine{color:var(--ok)}
-#timerbar .t-x{background:var(--card2); border:1px solid var(--linea); color:var(--muto);
-  width:36px; height:36px; border-radius:10px; font-size:15px; flex:none}
 /* ---------- PROGRESSI ---------- */
 .pr-card{background:var(--card); border:1px solid var(--linea); border-radius:var(--r);
   padding:14px 15px; margin-bottom:9px}
@@ -263,30 +283,42 @@ table.checks .del{background:none;border:0;color:var(--muto2);font-size:15px}
 .btn-sec{background:var(--card); border:1px solid var(--linea); color:var(--testo);
   font-size:14px; font-weight:600; padding:13px; border-radius:12px}
 @media (max-width:400px){
-  .serie-int,.set-riga{grid-template-columns:42px 1fr 1fr 46px; gap:6px}
+  .serie-int,.set-riga{grid-template-columns:40px 1fr 1fr 48px; gap:6px}
 }
 </style>
 </head>
 <body>
 
+<!-- TIMER FISSO IN ALTO: la tastiera non lo copre mai -->
+<div id="timerbar">
+  <div class="t-riga">
+    <div class="t-info">
+      <div class="t-lab">Recupero</div>
+      <div class="t-ex" id="t-ex"></div>
+    </div>
+    <div class="t-val" id="t-val">0:00</div>
+    <button class="t-btn" onclick="piuTempo()">+30s</button>
+    <button class="t-btn t-x" onclick="stopTimer()">✕</button>
+  </div>
+  <div class="t-prog"><i id="t-prog"></i></div>
+</div>
+
 <header>
   <div class="logo">🕷</div>
   <div>
     <h1>SCHEDA <span>2099</span></h1>
-    <div class="sub">Obiettivo: fisico Miguel O'Hara — largo sopra, vita stretta</div>
+    <div class="sub">Obiettivo Miguel O'Hara — largo sopra, vita stretta</div>
   </div>
 </header>
 
 <main>
   <div class="avviso-mem" id="avvisoMem">⚠️ Il browser non sta salvando i dati (modalità in incognito?). Vai su Scheda → <b>Scarica backup</b> prima di chiudere.</div>
 
-  <!-- VISTA ALLENAMENTO -->
   <section class="vista on" id="v-allena">
     <div id="pannello-giorni"></div>
     <div id="pannello-sessione" style="display:none"></div>
   </section>
 
-  <!-- VISTA PROGRESSI -->
   <section class="vista" id="v-prog">
     <div class="sez">I tuoi progressi esercizio per esercizio</div>
     <p class="hint" style="margin-bottom:10px">La linea mostra come sta salendo il tuo carico (o le ripetizioni, per gli esercizi a corpo libero).</p>
@@ -305,11 +337,11 @@ table.checks .del{background:none;border:0;color:var(--muto2);font-size:15px}
     <div id="pr-storico"></div>
   </section>
 
-  <!-- VISTA SCHEDA -->
   <section class="vista" id="v-scheda">
     <div class="sez">Regole del protocollo</div>
+    <div class="regola"><b>Riscaldamento (sempre)</b><div class="mini">5 min di camminata veloce o corda + 2 serie leggere di avvicinamento sul primo esercizio del giorno.</div></div>
     <div class="regola"><b>Lascia 1-2 ripetizioni "in canna" (RIR 1-2)</b><div class="mini">Non arrivare quasi mai a cedimento: fermati quando ne avresti ancora 1-2 pulite.</div></div>
-    <div class="regola"><b>Quando aumentare il carico</b><div class="mini">Quando chiudi TUTTE le serie al numero massimo del range, aumenta leggermente il peso e riparti dal minimo. Il tracker ti avvisa da solo con il riquadro giallo.</div></div>
+    <div class="regola"><b>Quando aumentare il carico</b><div class="mini">Quando chiudi TUTTE le serie al numero massimo del range, aumenta leggermente il peso e riparti dal minimo. L'app ti avvisa da sola con il riquadro giallo.</div></div>
     <div class="regola"><b>Trazioni e dip</b><div class="mini">Prima aumenta le ripetizioni; superato l'obiettivo, aggiungi zavorra leggera (zaino o cintura).</div></div>
     <div class="regola"><b>Deload (scarico)</b><div class="mini">Ogni 6-8 settimane, o se carichi calano / dormi male / gomiti e spalle danno fastidio: per una settimana dimezza le serie e togli il 10-15% di peso.</div></div>
     <div class="regola"><b>Sabato = recupero</b><div class="mini">Niente pesi: camminata leggera, mobilità spalle, stretching.</div></div>
@@ -355,15 +387,6 @@ table.checks .del{background:none;border:0;color:var(--muto2);font-size:15px}
     <input type="file" id="imp" accept=".json" style="display:none" onchange="importa(event)">
   </section>
 </main>
-
-<div id="timerbar">
-  <div class="t-info">
-    <div class="t-lab">Recupero in corso</div>
-    <div class="t-ex" id="t-ex"></div>
-  </div>
-  <div class="t-val" id="t-val">0:00</div>
-  <button class="t-x" onclick="stopTimer()">✕</button>
-</div>
 
 <nav>
   <button class="on" data-v="v-allena" onclick="vai(this)"><span class="ic">🏋️</span>Allenamento</button>
@@ -419,8 +442,9 @@ const RIPOSI=[
  {dow:6,nome:'Sabato',abbr:'SAB',tit:'Recupero',focus:'Camminata leggera, mobilità spalle, stretching'}
 ];
 
-/* ============ STATO (stesso formato della versione precedente) ============ */
-const KEY='scheda2099_v1';
+/* ============ STATO ============ */
+const KEY='scheda2099_v1';       /* storico sessioni e check (come sempre) */
+const BKEY='scheda2099_bozza';   /* bozza della sessione in corso: anti-perdita dati */
 let ST={sessioni:[],checks:[]};
 let memOk=true;
 function carica(){
@@ -430,7 +454,52 @@ function carica(){
   if(!ST.sessioni)ST.sessioni=[]; if(!ST.checks)ST.checks=[];
 }
 function persisti(){ try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){memOk=false;document.getElementById('avvisoMem').style.display='block';} }
-function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2400);}
+function toast(t,record){
+  const el=document.getElementById('toast');
+  el.textContent=t; el.classList.toggle('record',!!record); el.classList.add('on');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),record?3500:2400);
+}
+
+/* ============ BOZZA AUTOMATICA (non perdi più niente) ============ */
+function leggiBozza(){
+  try{
+    const b=JSON.parse(localStorage.getItem(BKEY));
+    if(!b||!b.giorno)return null;
+    if(Date.now()-b.ts>12*3600*1000){localStorage.removeItem(BKEY);return null;} /* più vecchia di 12h: scade */
+    return b;
+  }catch(e){return null;}
+}
+let salvaTimer=null;
+function salvaBozza(subito){
+  if(!sesGiorno)return;
+  clearTimeout(salvaTimer);
+  const fai=()=>{
+    const g=SCHEDA.find(x=>x.id===sesGiorno); if(!g)return;
+    const b={giorno:sesGiorno,ts:Date.now(),val:{},oks:[],timer:timerAttivo()};
+    for(const ex of g.es){
+      for(let i=0;i<ex.s;i++){
+        ['kg','rp'].forEach(p=>{
+          const el=document.getElementById(p+'-'+ex.id+'-'+i);
+          if(el&&el.value)b.val[p+'-'+ex.id+'-'+i]=el.value;
+        });
+        const ok=document.getElementById('ok-'+ex.id+'-'+i);
+        if(ok&&ok.classList.contains('si'))b.oks.push('ok-'+ex.id+'-'+i);
+      }
+      ['rir','nt'].forEach(p=>{
+        const el=document.getElementById(p+'-'+ex.id);
+        if(el&&el.value)b.val[p+'-'+ex.id]=el.value;
+      });
+    }
+    try{localStorage.setItem(BKEY,JSON.stringify(b));}catch(e){}
+    const m=document.getElementById('salvato-mini');
+    if(m)m.innerHTML='Bozza salvata automaticamente <b>✓</b> — puoi uscire e tornare quando vuoi';
+  };
+  if(subito)fai(); else salvaTimer=setTimeout(fai,400);
+}
+function svuotaBozza(){ try{localStorage.removeItem(BKEY);}catch(e){} }
+/* salva anche quando l'app va in background (YouTube, chiamate, ecc.) */
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden')salvaBozza(true); });
+window.addEventListener('pagehide',()=>salvaBozza(true));
 
 /* ============ NAV ============ */
 function vai(btn){
@@ -455,7 +524,10 @@ function tutteSessioniEx(exId){
     .map(s=>({data:s.data, ...s.es[exId]}));
 }
 function trovaEx(exId){ for(const g of SCHEDA){const e=g.es.find(x=>x.id===exId); if(e)return e;} return null; }
-function maxKg(sets){ return Math.max(0,...sets.filter(x=>x.reps).map(x=>parseFloat(x.kg)||0)); }
+function numOf(v){ return parseFloat(String(v==null?'':v).replace(',','.')); }  /* virgola decimale IT → punto */
+function maxKg(sets){ return Math.max(0,...sets.filter(x=>x.reps).map(x=>numOf(x.kg)||0)); }
+function maxReps(sets){ return Math.max(0,...sets.filter(x=>x.reps).map(x=>parseInt(x.reps)||0)); }
+function metricaEx(sets){ const k=maxKg(sets); return k>0?k:maxReps(sets); }
 function fmtData(iso){ return new Date(iso).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}); }
 function fmtSet(x,ex){ const u=ex.sec?'″':''; return (x.kg?x.kg+'kg×':'')+(x.reps||'–')+u; }
 function unitaDi(ex){ return ex.sec?'secondi':'ripetizioni'; }
@@ -470,6 +542,11 @@ function suggerimento(ex){
   }
   return null;
 }
+function sessioniSettimana(){
+  const ora=new Date(); const lun=new Date(ora);
+  lun.setDate(ora.getDate()-((ora.getDay()+6)%7)); lun.setHours(0,0,0,0);
+  return ST.sessioni.filter(s=>new Date(s.data)>=lun).length;
+}
 
 /* ============ HOME ============ */
 function sessioneOggiFatta(gid){
@@ -480,22 +557,30 @@ function renderGiorni(){
   const dow=new Date().getDay();
   const gAll=SCHEDA.find(g=>g.dow===dow);
   const gRip=RIPOSI.find(g=>g.dow===dow);
+  const bozza=leggiBozza();
+  const bozzaValida=bozza && SCHEDA.some(g=>g.id===bozza.giorno);
   let h='';
-
-  /* card OGGI */
   h+='<div class="oggi-card"><span class="tag">OGGI · '+new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})+'</span>';
   if(gAll){
     const fatta=sessioneOggiFatta(gAll.id);
     h+='<h2>'+gAll.tit+'</h2><div class="focus">'+gAll.focus+'</div>';
-    h+=fatta
-      ? '<button class="btn-grande fatto" onclick="apriSessione(\''+gAll.id+'\')">✓ Sessione registrata — rivedi o aggiungi</button>'
-      : '<button class="btn-grande" onclick="apriSessione(\''+gAll.id+'\')">INIZIA L\'ALLENAMENTO →</button>';
+    const nSett=sessioniSettimana();
+    if(nSett)h+='<div class="conta">🔥 '+nSett+' allenament'+(nSett===1?'o':'i')+' già registrat'+(nSett===1?'o':'i')+' questa settimana</div>';
+    if(bozzaValida&&bozza.giorno===gAll.id&&!fatta){
+      h+='<button class="btn-grande riprendi" onclick="apriSessione(\''+gAll.id+'\')">▶ RIPRENDI LA SESSIONE IN CORSO</button>';
+    }else if(fatta){
+      h+='<button class="btn-grande fatto" onclick="apriSessione(\''+gAll.id+'\')">✓ Sessione registrata — rivedi o aggiungi</button>';
+    }else{
+      h+='<button class="btn-grande" onclick="apriSessione(\''+gAll.id+'\')">INIZIA L\'ALLENAMENTO →</button>';
+    }
   }else{
     h+='<h2>'+gRip.tit+'</h2><div class="oggi-riposo">🚶 '+gRip.focus+'.<br>Il muscolo cresce oggi, mentre recuperi.</div>';
+    if(bozzaValida){
+      const gb=SCHEDA.find(x=>x.id===bozza.giorno);
+      h+='<button class="btn-grande riprendi" onclick="apriSessione(\''+bozza.giorno+'\')">▶ RIPRENDI: '+(gb?gb.tit:'sessione in corso')+'</button>';
+    }
   }
   h+='</div>';
-
-  /* settimana */
   h+='<div class="sez">La tua settimana</div>';
   const tutti=[...SCHEDA.map(g=>({...g,r:0})),...RIPOSI.map(g=>({...g,r:1}))].sort((a,b)=>((a.dow+6)%7)-((b.dow+6)%7));
   for(const g of tutti){
@@ -512,25 +597,29 @@ function renderGiorni(){
 
 /* ============ SESSIONE ============ */
 let sesGiorno=null;
+let statiCompleti={};
 function apriSessione(gid){
-  sesGiorno=gid;
   const g=SCHEDA.find(x=>x.id===gid);
+  if(!g){ svuotaBozza(); sesGiorno=null; return; }   /* giorno non valido (bozza corrotta): esci pulito */
+  sesGiorno=gid;
+  statiCompleti={};
+  const bozza=leggiBozza();
+  const conBozza=bozza&&bozza.giorno===gid;
   let h='<div class="ses-top"><button class="torna" onclick="chiudiSessione()">← Indietro</button><span class="ses-data">'+new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})+'</span></div>';
   h+='<div class="ses-tit">'+g.nome+' — '+g.tit+'</div><div class="ses-focus">'+g.focus+'</div>';
+  h+='<div class="salvato-mini" id="salvato-mini">'+(conBozza?'Bozza ripristinata <b>✓</b> — riprendi da dove eri':'Ogni numero che scrivi viene salvato in automatico: puoi uscire e tornare senza perdere niente.')+'</div>';
   h+='<div class="avanzamento"><div class="av-testo"><span>Esercizi completati</span><b id="av-num">0 di '+g.es.length+'</b></div><div class="av-barra"><div class="av-fill" id="av-fill"></div></div></div>';
-  h+='<p class="hint" style="margin-bottom:4px">Tocca un esercizio per aprirlo. Per ogni serie scrivi peso e '+ 'ripetizioni, poi premi ✓ per far partire il recupero.</p>';
+  h+='<p class="hint" style="margin-bottom:4px">🔥 Riscaldati prima: 5 min camminata/corda + 2 serie leggere sul primo esercizio. Poi tocca l\'esercizio, scrivi peso e ripetizioni, premi ✓ e parte il recupero.</p>';
 
   g.es.forEach((ex,idx)=>{
     const u=ultimaSessione(ex.id);
     const sug=suggerimento(ex);
     const unita=ex.sec?'sec':'reps';
     h+='<div class="ex" id="card-'+ex.id+'">';
-    /* testa */
     h+='<div class="ex-testa" onclick="toggleEx(\''+ex.id+'\')">'
       +'<div class="ex-num" id="num-'+ex.id+'">'+(idx+1)+'</div>'
       +'<div><div class="t-nome">'+ex.n+'</div><div class="t-target">'+ex.s+' serie × '+ex.rmin+'-'+ex.rmax+' '+unitaDi(ex)+(ex.bw?' · corpo libero':'')+'</div></div>'
       +'<div class="ex-chev">▼</div></div>';
-    /* corpo */
     h+='<div class="ex-corpo">';
     h+='<div class="ex-istruzione">💡 '+ex.nota+'</div>';
     if(u){
@@ -539,10 +628,9 @@ function apriSessione(gid){
       h+='<button class="btn-copia" onclick="copiaUltima(\''+ex.id+'\')">↩︎ Ricopia i dati dell\'ultima volta (poi migliorali)</button>';
     }
     if(sug)h+='<div class="box-prog">🔥 '+sug+'</div>';
-    /* intestazione colonne + serie */
     h+='<div class="serie-int"><span>Serie</span><span>'+(ex.bw?'Zavorra kg':'Peso kg')+'</span><span>'+(ex.sec?'Secondi':'Ripetizioni')+'</span><span>Fatta</span></div>';
     for(let i=0;i<ex.s;i++){
-      h+='<div class="set-riga">'
+      h+='<div class="set-riga" id="riga-'+ex.id+'-'+i+'">'
         +'<div class="set-n">'+(i+1)+'ª</div>'
         +'<input type="number" step="0.5" inputmode="decimal" placeholder="'+(ex.bw?'0':'kg')+'" id="kg-'+ex.id+'-'+i+'" oninput="aggiornaStato()">'
         +'<input type="number" inputmode="numeric" placeholder="'+unita+'" id="rp-'+ex.id+'-'+i+'" oninput="aggiornaStato()">'
@@ -550,27 +638,48 @@ function apriSessione(gid){
       +'</div>';
     }
     h+='<div class="ex-extra">'
-      +'<div class="rir-box"><label>Quante ne avevi ancora?</label><select id="rir-'+ex.id+'"><option value="">—</option><option>0</option><option>1</option><option>2</option><option>3</option></select></div>'
+      +'<div class="rir-box"><label>Quante ne avevi ancora?</label><select id="rir-'+ex.id+'" onchange="salvaBozza()"><option value="">—</option><option>0</option><option>1</option><option>2</option><option>3</option></select></div>'
       +'<button class="btn-timer" onclick="startTimer('+ex.rec+',\''+ex.n.replace(/'/g,"\\'")+'\')">⏱ '+Math.floor(ex.rec/60)+':'+String(ex.rec%60).padStart(2,'0')+'</button>'
     +'</div>';
-    h+='<input class="ex-note-input" id="nt-'+ex.id+'" placeholder="Note o fastidi (facoltativo)">';
+    h+='<input class="ex-note-input" id="nt-'+ex.id+'" placeholder="Note o fastidi (facoltativo)" oninput="salvaBozza()">';
     h+='</div></div>';
   });
   h+='<button class="salva-ses" onclick="salvaSessione()">🕷 REGISTRA LA SESSIONE</button>';
   h+='<p class="hint" style="text-align:center">Puoi registrare anche una sessione incompleta: salva quello che hai fatto.</p>';
+  h+='<button class="annulla-ses" onclick="annullaSessione()">Svuota questa sessione e ricomincia da zero</button>';
 
   document.getElementById('pannello-giorni').style.display='none';
   const p=document.getElementById('pannello-sessione');
   p.innerHTML=h; p.style.display='block';
-  /* apri il primo esercizio */
-  document.getElementById('card-'+g.es[0].id).classList.add('aperto');
+
+  /* ripristina la bozza se c'è */
+  if(conBozza){
+    for(const [id,v] of Object.entries(bozza.val||{})){
+      const el=document.getElementById(id); if(el)el.value=v;
+    }
+    (bozza.oks||[]).forEach(id=>{ const el=document.getElementById(id); if(el)el.classList.add('si'); });
+    if(bozza.timer&&bozza.timer.fine>Date.now())riprendiTimer(bozza.timer);
+  }
+  aggiornaStato(true);
+  /* apri il primo esercizio non completo */
+  const primo=g.es.find(ex=>!exCompleto(ex))||g.es[0];
+  document.getElementById('card-'+primo.id).classList.add('aperto');
   window.scrollTo({top:0});
 }
 function toggleEx(id){ document.getElementById('card-'+id).classList.toggle('aperto'); }
 function chiudiSessione(){
+  salvaBozza(true);
   document.getElementById('pannello-sessione').style.display='none';
   document.getElementById('pannello-giorni').style.display='block';
+  sesGiorno=null;
   renderGiorni();
+}
+function annullaSessione(){
+  if(!confirm('Vuoi davvero svuotare i dati inseriti in questa sessione?'))return;
+  svuotaBozza();
+  const g=sesGiorno; sesGiorno=null;
+  apriSessione(g);
+  toast('Sessione svuotata');
 }
 function copiaUltima(exId){
   const ex=trovaEx(exId), u=ultimaSessione(exId);
@@ -591,7 +700,7 @@ function exCompleto(ex){
   }
   return true;
 }
-function aggiornaStato(){
+function aggiornaStato(silenzioso){
   if(!sesGiorno)return;
   const g=SCHEDA.find(x=>x.id===sesGiorno);
   let fatti=0;
@@ -601,11 +710,31 @@ function aggiornaStato(){
     const ok=exCompleto(ex);
     card.classList.toggle('fatto',ok);
     document.getElementById('num-'+ex.id).textContent=ok?'✓':(g.es.indexOf(ex)+1);
+    for(let i=0;i<ex.s;i++){
+      const riga=document.getElementById('riga-'+ex.id+'-'+i);
+      const rp=document.getElementById('rp-'+ex.id+'-'+i);
+      if(riga&&rp)riga.classList.toggle('done',!!rp.value.trim());
+    }
+    /* appena completi un esercizio: si chiude e si apre il prossimo */
+    if(ok&&!statiCompleti[ex.id]&&!silenzioso){
+      statiCompleti[ex.id]=true;
+      const prossimo=g.es.find(e2=>!exCompleto(e2));
+      if(prossimo){
+        setTimeout(()=>{
+          card.classList.remove('aperto');
+          const c2=document.getElementById('card-'+prossimo.id);
+          c2.classList.add('aperto');
+          c2.scrollIntoView({behavior:'smooth',block:'start'});
+        },350);
+      }
+    }
+    if(ok)statiCompleti[ex.id]=true; else statiCompleti[ex.id]=false;
     if(ok)fatti++;
   }
   const n=document.getElementById('av-num'), f=document.getElementById('av-fill');
   if(n)n.textContent=fatti+' di '+g.es.length;
   if(f)f.style.width=(fatti/g.es.length*100)+'%';
+  salvaBozza();
 }
 function segnaSet(exId,i,rec,nome){
   const b=document.getElementById('ok-'+exId+'-'+i);
@@ -630,29 +759,70 @@ function salvaSessione(){
     if(sets.some(x=>x.reps)||note)ses.es[ex.id]={sets,rir,note};
   }
   if(!qualcosa){toast('Scrivi almeno una serie prima di registrare');return;}
+  /* record: confronta con lo storico PRIMA di salvare */
+  const record=[];
+  for(const [exId,dati] of Object.entries(ses.es)){
+    const ex=trovaEx(exId); if(!ex)continue;
+    const st=tutteSessioniEx(exId); if(!st.length)continue;
+    const meglio=Math.max(...st.map(x=>metricaEx(x.sets)));
+    if(metricaEx(dati.sets)>meglio)record.push(ex.n);
+  }
   ses.data=new Date().toISOString();
   ST.sessioni.push(ses);
   persisti();
-  toast('Sessione registrata. Grande, fra 🕷');
+  sesGiorno=null;      /* prima di stopTimer, così non risalva la bozza */
   stopTimer();
-  chiudiSessione();
+  svuotaBozza();
+  document.getElementById('pannello-sessione').style.display='none';
+  document.getElementById('pannello-giorni').style.display='block';
+  renderGiorni();
+  if(record.length)toast('🏆 NUOVO RECORD su: '+record.join(', ')+'!',true);
+  else toast('Sessione registrata. Grande, fra 🕷');
 }
 
-/* ============ TIMER ============ */
-let timerInt=null,timerFine=0;
-function startTimer(sec,nome){
+/* ============ TIMER (in alto + suono) ============ */
+let timerInt=null,timerFine=0,timerTot=0,timerNome='';
+let actx=null;
+function sbloccaAudio(){ try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended')actx.resume(); }catch(e){} }
+document.addEventListener('pointerdown',sbloccaAudio,{once:true});
+function beep(){
+  try{
+    sbloccaAudio(); if(!actx)return;
+    let t=actx.currentTime;
+    for(let i=0;i<3;i++){
+      const o=actx.createOscillator(),gn=actx.createGain();
+      o.type='square'; o.frequency.value=i<2?880:1175;
+      gn.gain.setValueAtTime(0.0001,t);
+      gn.gain.exponentialRampToValueAtTime(0.3,t+0.01);
+      gn.gain.exponentialRampToValueAtTime(0.0001,t+0.22);
+      o.connect(gn); gn.connect(actx.destination);
+      o.start(t); o.stop(t+0.25);
+      t+=0.3;
+    }
+  }catch(e){}
+}
+function timerAttivo(){ return timerFine>Date.now()?{fine:timerFine,tot:timerTot,nome:timerNome}:null; }
+function riprendiTimer(t){ timerTot=t.tot; avviaConteggio(t.fine,t.nome); }
+function startTimer(sec,nome){ timerTot=sec; avviaConteggio(Date.now()+sec*1000,nome); salvaBozza(true); }
+function piuTempo(){ if(timerFine>Date.now()){ timerFine+=30000; timerTot+=30; salvaBozza(true);} }
+function avviaConteggio(fine,nome){
   clearInterval(timerInt);
-  timerFine=Date.now()+sec*1000;
-  document.getElementById('t-ex').textContent=nome||'';
+  timerFine=fine; timerNome=nome||'';
+  document.getElementById('t-ex').textContent=timerNome;
   const bar=document.getElementById('timerbar');
   const val=document.getElementById('t-val');
-  bar.classList.add('on'); val.classList.remove('fine');
+  const prog=document.getElementById('t-prog');
+  bar.classList.add('on'); document.body.classList.add('timer-on');
+  val.classList.remove('fine');
   const tick=()=>{
     const r=Math.max(0,Math.round((timerFine-Date.now())/1000));
     val.textContent=Math.floor(r/60)+':'+String(r%60).padStart(2,'0');
+    if(prog&&timerTot)prog.style.width=(r/timerTot*100)+'%';
     if(r<=0){
-      clearInterval(timerInt); val.textContent='VAI!'; val.classList.add('fine');
-      if(navigator.vibrate)navigator.vibrate([200,100,200]);
+      clearInterval(timerInt);
+      val.textContent='VAI!'; val.classList.add('fine');
+      beep();
+      if(navigator.vibrate)navigator.vibrate([250,120,250,120,400]);
       setTimeout(stopTimer,4000);
     }
   };
@@ -660,7 +830,10 @@ function startTimer(sec,nome){
 }
 function stopTimer(){
   clearInterval(timerInt);
+  timerFine=0;
   document.getElementById('timerbar').classList.remove('on');
+  document.body.classList.remove('timer-on');
+  if(sesGiorno)salvaBozza(true);
 }
 
 /* ============ PROGRESSI ============ */
@@ -674,11 +847,7 @@ function renderProgressi(){
   for(const id of ids){
     const ex=trovaEx(id); if(!ex)continue;
     const st=tutteSessioniEx(id); if(!st.length)continue;
-    const serie=st.map(x=>{
-      const kg=maxKg(x.sets);
-      const reps=Math.max(...x.sets.filter(y=>y.reps).map(y=>parseInt(y.reps)||0));
-      return kg>0?kg:reps;
-    });
+    const serie=st.map(x=>metricaEx(x.sets));
     const ult=st[st.length-1];
     const ultV=serie[serie.length-1], preV=serie.length>1?serie[serie.length-2]:null;
     let delta='',cl='pari';
@@ -765,6 +934,12 @@ function importa(ev){
 /* ============ AVVIO ============ */
 carica();
 renderGiorni();
+/* se c'è una sessione lasciata a metà (di un giorno valido), riaprila direttamente */
+(function(){
+  const b=leggiBozza();
+  if(b && SCHEDA.some(g=>g.id===b.giorno)){ apriSessione(b.giorno); toast('Sessione ripristinata: riprendi da dove eri 🕷'); }
+  else if(b){ svuotaBozza(); }
+})();
 
 /* PWA: registra il service worker solo quando l'app gira da un sito (non da file locale) */
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
